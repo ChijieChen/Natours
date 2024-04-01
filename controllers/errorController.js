@@ -17,8 +17,8 @@ const handleValidationErrorDB = err => {
   return new AppError(message, 400);
 };
 
-const handleJWTError = err => new AppError('Invalid token', 401);
-const handleJWTExpiredError = err => new AppError('Expired token', 401);
+const handleJWTError = () => new AppError('Invalid token', 401);
+const handleJWTExpiredError = () => new AppError('Expired token', 401);
 
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -39,6 +39,7 @@ const sendErrorProd = (err, res) => {
 
     // Programming error
   } else {
+    // eslint-disable-next-line no-console
     console.error('ERROR', err);
 
     res.status(500).json({
