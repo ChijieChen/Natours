@@ -5,7 +5,7 @@ const crypto = require('crypto');
 
 // name, email, photot, password, passwordConfirm
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     require: [true, 'Please tell us your name']
@@ -64,17 +64,17 @@ userSchema.pre('save', async function(next) {
   this.passwordChangedAt = Date.now() - 1000;
 });
 
+userSchema.pre(/^find/, function(next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
+
 userSchema.methods.correctPassword = async function(
   candidatePassword,
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
-
-userSchema.pre(/^find/, function(next) {
-  this.find({ active: { $ne: false } });
-  next();
-});
 
 userSchema.methods.changedPasswordAfter = function(JWTtimestamp) {
   if (this.passwordChangedAt) {
